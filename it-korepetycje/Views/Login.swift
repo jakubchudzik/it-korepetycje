@@ -2,11 +2,10 @@
 import SwiftUI
 
 struct Login: View {
-    @State private var email:String = ""
-    @State private var password:String = ""
+    @ObservedObject var viewModel = LoginViewModel()
     
     var body: some View {
-        NavigationView{
+        NavigationView {
         VStack{
             Spacer()
 //            Circle()
@@ -21,10 +20,10 @@ struct Login: View {
             Image("logo")
                 
             Group{
-                TextField(text: $email, prompt: Text("E-mail")) {
+                TextField(text: $viewModel.email, prompt: Text("E-mail")) {
                     Text("Username")
                 }
-                SecureField(text: $password, prompt: Text("Hasło")) {
+                SecureField(text: $viewModel.password, prompt: Text("Hasło")) {
                     Text("Password")
                 }
             }
@@ -34,33 +33,34 @@ struct Login: View {
                 .shadow(radius: 3)
                 .frame(width:400)
                 
-//            Button("Zaloguj"){
-//                //cos tam bedzie
-//            }
-            NavigationLink(destination:AboutTutor(),label:{Text("Zaloguj")})
+            Button("Zaloguj") {
+                viewModel.login()
+            }.fullScreenCover(isPresented: $viewModel.isPresented, content: AboutTutor.init)
+
             .foregroundColor(.white)
             .font(.title)
             .frame(width: 150)
             .padding()
             .background(RoundedRectangle(cornerRadius: 40).fill(Color(red: 62.0/255.0, green: 163.0/255.0, blue: 190.0/255.0)))
-            
-            Group{
-//                Button("Załóż konto"){
-//
-//                    //cos tam bedzie
-//                }
-                NavigationLink(destination: Registration(),label:{Text("Załóż konto")})
-                Button("Nie pamiętasz hasła?")
-                {
-                    //tez cos
+            Group {
+                Text(viewModel.descriptionError)
+                    .foregroundColor(.red)
+                    .opacity(viewModel.isEnabledErrorTextView ? 1.0 : 0.0)
+                
+                Button("Załóż konto") {
+                    self.viewModel.gotoRegistration()
                 }
+                .fullScreenCover(isPresented: $viewModel.isPresentedRegistration, content: Registration.init)
+//                Button("Nie pamiętasz hasła?")
+//                {
+//                    //tez cos
+//                }
                 .offset(y:-30)
             }
             .padding()
             .foregroundColor(Color(red: 94.0/255.0, green: 99.0/255.0, blue: 103.0/255.0))
             
             Spacer()
-            
         }
         .background(Image("tlo"))
             .ignoresSafeArea()

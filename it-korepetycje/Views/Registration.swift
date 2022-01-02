@@ -9,13 +9,11 @@ import SwiftUI
 import Firebase
 import FirebaseStorage
 
-
 struct Registration: View {
-    @State private var email:String = ""
-    @State private var name:String = ""
-    @State private var password:String = ""
-    @State private var password2:String = ""
     
+    @Environment(\.presentationMode) var presentationMode
+    
+    @ObservedObject var viewModel = RegistrationViewModel()
     
     var body: some View {
         VStack{
@@ -27,16 +25,16 @@ struct Registration: View {
                 .offset(y:-20)
                 
             Group{
-                TextField(text: $email, prompt: Text("E-mail")) {
+                TextField(text: $viewModel.email, prompt: Text("E-mail")) {
                     Text("Username")
                 }
-                TextField(text: $name, prompt: Text("Nazwa")) {
+//                TextField(text: $name, prompt: Text("Nazwa")) {
+//                    Text("Password")
+//                }
+                SecureField(text: $viewModel.password, prompt: Text("Hasło")) {
                     Text("Password")
                 }
-                SecureField(text: $password, prompt: Text("Hasło")) {
-                    Text("Password")
-                }
-                SecureField(text: $password2, prompt: Text("Powtórz hasło")) {
+                SecureField(text: $viewModel.password2, prompt: Text("Powtórz hasło")) {
                     Text("Password")
                 }
             }
@@ -47,15 +45,25 @@ struct Registration: View {
                 .frame(width:400)
         
                 
-            Button("Załóż konto"){
-                //cos tam bedzie
+            Button("Załóż konto") {
+                viewModel.createUser()
             }
+            .fullScreenCover(isPresented: $viewModel.isPresented, content: AboutTutor.init)
             .foregroundColor(.white)
             .font(.title)
             .frame(width: 180)
             .padding()
             .background(RoundedRectangle(cornerRadius: 40).fill(Color(red: 62.0/255.0, green: 163.0/255.0, blue: 190.0/255.0)))
             .offset(y:20)
+            Text(viewModel.descriptionError)
+                .foregroundColor(.red)
+                .offset(y:40)
+                .opacity(viewModel.isEnabledErrorTextView ? 1.0 : 0.0)
+            Spacer()
+            Button("Zamknij") {
+                presentationMode.wrappedValue.dismiss()
+            }
+            .offset(y: -40)
         }
         .background(Image("tlo"))
         .ignoresSafeArea()

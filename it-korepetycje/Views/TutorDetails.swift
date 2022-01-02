@@ -8,7 +8,13 @@
 import SwiftUI
 
 struct TutorDetails: View {
-    var tutor:Tutor
+    
+    @Environment(\.presentationMode) var presentationMode
+    
+    var tutor: Tutor = MyFirebaseService.shared.selectedTutor!
+    
+    @State var isFirstSegmentSecected = true
+    
     var body: some View {
         VStack{
             Image(tutor.profilImg).resizable()
@@ -19,15 +25,14 @@ struct TutorDetails: View {
             Text("\(tutor.name) \(tutor.surname)")
             HStack{
                 Group{
-                    Button("O MNIE"){
-                        
+                    Button("O MNIE") {
+                        self.isFirstSegmentSecected = true
                     }
                     .offset(x:-30)
                     Divider().frame( height: 20)
                         .background(Color.black)
-                    Button("REZERWUJ")
-                    {
-                        
+                    Button("REZERWUJ") {
+                        self.isFirstSegmentSecected = false
                     }
                     .offset(x:30)
                 }
@@ -38,9 +43,15 @@ struct TutorDetails: View {
             .padding()
             Divider().background(Color.black)
 
-            Text(tutor.description)
+            Text(self.isFirstSegmentSecected ? tutor.description: "Skontantkuj się ze mną pod adersem \(tutor.email)")
                 .offset(y:30)
             Spacer()
+            
+            Button("Zamknij") {
+                presentationMode.wrappedValue.dismiss()
+            }
+            .foregroundColor(.red)
+            
         }
         .background(Image("tlo"))
         //.navigationBarTitle("Title View1")
@@ -49,6 +60,6 @@ struct TutorDetails: View {
 
 struct TutorDetails_Previews: PreviewProvider {
     static var previews: some View {
-        TutorDetails(tutor: Tutor(email:"maksiu123@wp.pl",name: "Maksymilian", surname: "Bąk", description: "Jestem nauczycielem od 5 lat. Matematyka i fizyka to moja pasja.", profilImg: "testowy",subjects: ["Matematyka":100,"Fizyka":90],score:3.3))
+        TutorDetails(tutor: Tutor(email:"maksiu123@wp.pl",name: "Maksymilian", surname: "Bąk", description: "Jestem nauczycielem od 5 lat. Matematyka i fizyka to moja pasja.", profilImg: "testowy",subjects: [Subjects(name: "Matematyka", price: 100)],score:3.3))
     }
 }

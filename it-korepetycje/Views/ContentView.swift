@@ -6,24 +6,11 @@
 //
 
 import SwiftUI
-import Firebase
-import FirebaseStorage
 
 struct ContentView: View {
-    @ObservedObject var model = ViewModel()
-    let storage = Storage.storage()
     var body: some View {
-        List(model.list){item in
-            Text(item.password)
-            
-        }
-        
-        // Reference to an image file in Firebase Storage
-
-        //Login()
-    }
-    init(){
-        model.getData()
+//        AboutTutor()
+        Login()
     }
 }
 
